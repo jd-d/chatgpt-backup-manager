@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -101,9 +101,32 @@ class Job:
                 "archive_path": str(self.archive_path),
                 "extract_path": str(self.extract_path),
                 "index_path": str(self.index_path),
-                "created_at": self.created_at.isoformat() + "Z",
-                "updated_at": self.updated_at.isoformat() + "Z",
+                "created_at": _format_iso8601(self.created_at),
+                "updated_at": _format_iso8601(self.updated_at),
             }
+
+    @classmethod
+    def from_snapshot(cls, data: Dict[str, Any]) -> "Job":
+        """Restore a job instance from a serialised snapshot."""
+
+        created_at = _parse_iso8601(data["created_at"])
+        updated_at = _parse_iso8601(data["updated_at"])
+        return cls(
+            id=data["id"],
+            url=data["url"],
+            status=JobStatus(data["status"]),
+            stage=data["stage"],
+            stage_detail=data.get("stage_detail"),
+            progress=data.get("progress"),
+            bytes_downloaded=data.get("bytes_downloaded", 0),
+            total_bytes=data.get("total_bytes"),
+            message=data.get("message"),
+            archive_path=Path(data["archive_path"]),
+            extract_path=Path(data["extract_path"]),
+            index_path=Path(data["index_path"]),
+            created_at=created_at,
+            updated_at=updated_at,
+        )
 
 
 class JobInfo(BaseModel):
@@ -151,3 +174,9 @@ def _parse_iso8601(value: str) -> datetime:
     if value.endswith("Z"):
         value = value[:-1] + "+00:00"
     return datetime.fromisoformat(value)
+
+
+def _format_iso8601(value: datetime) -> str:
+    if value.tzinfo is None:
+        return value.isoformat() + "Z"
+    return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")

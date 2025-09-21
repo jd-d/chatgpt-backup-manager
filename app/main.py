@@ -18,6 +18,11 @@ async def get_manager() -> JobManager:
     return manager
 
 
+@app.on_event("startup")
+async def _startup_manager() -> None:
+    await manager.startup()
+
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request, manager: JobManager = Depends(get_manager)) -> HTMLResponse:
     jobs = await manager.list_jobs()
