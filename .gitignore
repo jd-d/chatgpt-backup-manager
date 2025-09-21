@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+.env
+.venv/
+.env.local
+.DS_Store
+.idea/
+.vscode/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+# Application data directories
+/data/downloads/
+/data/extracted/
+/data/indexes/
+/data/tmp/

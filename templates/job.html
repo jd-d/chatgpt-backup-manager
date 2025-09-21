@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+    <h2>Job {{ job.id }}</h2>
+    <p>Status: <strong>{{ job.status.value }}</strong></p>
+    <p>Stage: {{ job.stage }}{% if job.stage_detail %} — {{ job.stage_detail }}{% endif %}</p>
+    {% if job.progress is not none %}
+        {% set percent = (job.progress * 100) | round(1) %}
+        <div class="progress-bar"><span style="width: {{ percent }}%"></span></div>
+        <p class="muted">{{ percent }}% complete</p>
+    {% endif %}
+    {% if job.message %}
+        <p class="error">{{ job.message }}</p>
+    {% endif %}
+    <dl>
+        <dt>Source URL</dt>
+        <dd><code>{{ job.url }}</code></dd>
+        <dt>Downloaded bytes</dt>
+        <dd>{{ job.bytes_downloaded }}{% if job.total_bytes %} / {{ job.total_bytes }}{% endif %}</dd>
+        <dt>Archive path</dt>
+        <dd><code>{{ job.archive_path }}</code></dd>
+        <dt>Extraction directory</dt>
+        <dd><code>{{ job.extract_path }}</code></dd>
+        <dt>Search index</dt>
+        <dd><code>{{ job.index_path }}</code></dd>
+        <dt>Created</dt>
+        <dd>{{ job.created_at }}</dd>
+        <dt>Last updated</dt>
+        <dd>{{ job.updated_at }}</dd>
+    </dl>
+    <p>
+        {% if job.status.value == 'completed' %}
+            <a href="{{ url_for('search', job_id=job.id) }}">Start searching this backup</a>
+        {% else %}
+            <span class="muted">Index not ready yet. This page refreshes cleanly—no spinning beach balls.</span>
+        {% endif %}
+    </p>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="notice">
+    <h2>Ingest a new backup</h2>
+    <p>Paste the direct download URL from the OpenAI export email. The download manager will stream the
+       archive reliably, resume partial downloads, and keep the interface responsive.</p>
+    <form method="post" action="/jobs">
+        <label for="url">Backup download link</label>
+        <input type="url" id="url" name="url" placeholder="https://.../chatgpt-export.zip" required>
+        <p class="muted">We never send the link anywhere else—everything happens on your machine.</p>
+        <button type="submit">Start download</button>
+    </form>
+</section>
+
+<section>
+    <h2>Tracked jobs</h2>
+    {% if jobs %}
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Details</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for job in jobs %}
+                <tr>
+                    <td><a href="{{ url_for('job_detail', job_id=job.id) }}">{{ job.id }}</a></td>
+                    <td>{{ job.status.value }}</td>
+                    <td>
+                        {% if job.progress is not none %}
+                            {% set percent = (job.progress * 100) | round(1) %}
+                            <div class="progress-bar"><span style="width: {{ percent }}%"></span></div>
+                            <div class="muted">{{ percent }}%</div>
+                        {% else %}
+                            <span class="muted">calculating…</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ job.stage }}{% if job.stage_detail %} — {{ job.stage_detail }}{% endif %}
+                    </td>
+                    <td>
+                        {% if job.status.value == 'completed' %}
+                            <a href="{{ url_for('search', job_id=job.id) }}">Search</a>
+                        {% else %}
+                            <span class="muted">pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="muted">No jobs yet. Drop in a link and we will do the heavy lifting.</p>
+    {% endif %}
+</section>
+{% endblock %}
