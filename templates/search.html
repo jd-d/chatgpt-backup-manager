@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+    <h2>Search indexed conversations</h2>
+    {% if not jobs %}
+        <p class="muted">No backups indexed yet. Start a download from the home page first.</p>
+    {% else %}
+        <form method="get" action="/search">
+            <label for="job">Choose backup</label>
+            <select id="job" name="job_id" required>
+                <option value="" disabled {% if not selected_job %}selected{% endif %}>Select a job…</option>
+                {% for job in jobs %}
+                    <option value="{{ job.id }}" {% if selected_job and selected_job.id == job.id %}selected{% endif %}>
+                        {{ job.id }} — {{ job.status.value }}
+                    </option>
+                {% endfor %}
+            </select>
+            <label for="query">Search query</label>
+            <input type="text" id="query" name="q" value="{{ query }}" placeholder="Ask a question or search for a phrase" required>
+            <button type="submit">Search</button>
+        </form>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        {% if results %}
+            <h3>Results</h3>
+            <ul>
+                {% for item in results %}
+                    <li>
+                        <strong>{{ item.title or 'Untitled conversation' }}</strong>
+                        {% if item.timestamp %}
+                            <span class="muted">({{ item.timestamp }})</span>
+                        {% endif %}
+                        <pre>{{ item.snippet }}</pre>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% elif selected_job and query %}
+            <p class="muted">No matches found for this query.</p>
+        {% endif %}
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ title or "ChatGPT Backup Manager" }}</title>
+    <style>
+        body {
+            font-family: "Fira Code", "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+            background-color: #111;
+            color: #eee;
+            margin: 0;
+            padding: 2rem;
+        }
+        a { color: #8be9fd; }
+        h1, h2, h3 { color: #50fa7b; }
+        form { margin-bottom: 2rem; }
+        input[type="text"], input[type="url"], select {
+            width: 100%;
+            padding: 0.6rem;
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            color: #f8f8f2;
+        }
+        button {
+            padding: 0.6rem 1.2rem;
+            background-color: #44475a;
+            color: #f8f8f2;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #6272a4;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.4rem 0.6rem;
+            border-bottom: 1px solid #333;
+            text-align: left;
+        }
+        .muted {
+            color: #888;
+        }
+        .error {
+            color: #ff5555;
+        }
+        .notice {
+            background-color: #202020;
+            padding: 1rem;
+            border: 1px solid #333;
+            margin-bottom: 1rem;
+        }
+        .progress-bar {
+            background-color: #333;
+            border: 1px solid #555;
+            height: 1rem;
+            width: 100%;
+            position: relative;
+        }
+        .progress-bar span {
+            display: block;
+            height: 100%;
+            background-color: #50fa7b;
+        }
+        .layout {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <header>
+        <h1>ChatGPT Backup Manager</h1>
+        <p class="muted">Manage downloads of humongous backup archives without breaking a sweat.</p>
+        <nav>
+            <a href="/">Home</a> | <a href="/search">Search</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</div>
+</body>
+</html>
